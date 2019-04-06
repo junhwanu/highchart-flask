@@ -11,7 +11,7 @@ from db_manager import DBManager
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/simulate')
 def index():
     return render_template('index.htm')
 
