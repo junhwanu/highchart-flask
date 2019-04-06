@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Highstock Example</title>
+
+		<style type="text/css">
+
+		</style>
+	</head>
+	<body>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="{{ url_for('static',filename='highstock/code/highstock.js') }}"></script>
+<script src="{{ url_for('static',filename='highstock/code/modules/drag-panes.js') }}"></script>
+<script src="{{ url_for('static',filename='highstock/code/modules/exporting.js') }}"></script>
+
+<div id="container" style="height: 400px; min-width: 310px"></div>
+
+
+		<script type="text/javascript">
+
+$.getJSON('/dummy.json', function (data) {
+	console.log(data);
+    // split the data set into ohlc and volume
+    var ohlc = [],
+        volume = [],
+        dataLength = data.length,
+        // set the allowed units for data grouping
+        groupingUnits = [[
+            'week',                         // unit name
+            [1]                             // allowed multiples
+        ], [
+            'month',
+            [1, 2, 3, 4, 6]
+        ]],
+
+        i = 0;
+
+    for (i; i < dataLength; i += 1) {
+        ohlc.push([
+            data[i]['min_15']['added']['candlestick']['data'][1], // the date
+            data[i]['min_15']['added']['candlestick']['data'][2], // the open
+            data[i]['min_15']['added']['candlestick']['data'][3], // the high
+            data[i]['min_15']['added']['candlestick']['data'][4], // the low
+            data[i]['min_15']['added']['candlestick']['data'][5], // the close
+        ]);
+
+        volume.push([
+            data[i]['min_15']['added']['candlestick']['data'][1], // the date
+            data[i]['min_15']['added']['candlestick']['data'][6], // the volume
+        ]);
+    }
+
+
+    // create the chart
+    Highcharts.stockChart('container', {
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'CLJ19'
+        },
+
+        yAxis: [{
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            title: {
+                text: 'OHLC'
+            },
+            height: '60%',
+            lineWidth: 2,
+            resize: {
+                enabled: true
+            }
+        }, {
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            title: {
+                text: 'Volume'
+            },
+            top: '65%',
+            height: '35%',
+            offset: 0,
+            lineWidth: 2
+        }],
+
+        tooltip: {
+            split: true
+        },
+
+        series: [{
+            type: 'candlestick',
+            name: 'CLJ19',
+            data: ohlc,
+            dataGrouping: {
+				enabled: false
+            }
+        }, {
+            type: 'column',
+            name: 'Volume',
+            data: volume,
+            yAxis: 1,
+            dataGrouping: {
+                enabled: false
+            }
+        }]
+    });
+});
+		</script>
+	</body>
+</html>

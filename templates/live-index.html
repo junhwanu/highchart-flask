@@ -1,0 +1,100 @@
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<div id="container" style="height: 400px; min-width: 310px"></div>
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+
+<button type="button" id="btnPlay">Play</button>
+<button type="button" id="btnStop">Stop</button>
+
+<script>
+    var isPlaying = true;
+    $("#btnPlay").click(function() {
+        isPlaying = true;
+    });
+
+    $("#btnStop").click(function() {
+        isPlaying = false;
+    });
+
+    $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/new-intraday.json', function (data) {
+
+        for(var i=1;i<data.length;i++) {
+            //data[i][0] = data[i-1][0] + 1;
+        }
+
+        console.log(data);
+        // create the chart
+        Highcharts.stockChart('container', {
+            chart: {
+                events: {
+                    load: function () {
+                        // set up the updating of the chart each second
+                        var series = this.series;
+                        var index = 1001;
+                        setInterval(function () {
+                            if(index < 1200 && isPlaying) {
+                                series[0].addPoint(data[index], false, false);
+                                var point = [data[index][0], data[index][4]];
+                                console.log(point);
+                                series[1].addPoint(point, true, false);
+                                index++;
+                            }
+                        }, 250);
+                    }
+                }
+            },
+
+            title: {
+                text: 'AAPL stock price by minute'
+            },
+
+            rangeSelector: {
+                buttons: [{
+                    type: 'hour',
+                    count: 1,
+                    text: '1h'
+                }, {
+                    type: 'day',
+                    count: 1,
+                    text: '1D'
+                }, {
+                    type: 'all',
+                    count: 1,
+                    text: 'All'
+                }],
+                selected: 1,
+                inputEnabled: false
+            },
+            plotOptions: {
+                series: {
+
+                },
+                candlestick: {
+                    dataGrouping: {
+                        enabled: false
+                    }
+                },
+                line: {
+                    dataGrouping: {
+                        enabled: false
+                    }
+                }
+            },
+
+            series: [{
+                name: 'AAPL',
+                type: 'candlestick',
+                data: data.slice(0, 1000),
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }/*, {
+                name: 'Close',
+                type: 'line',
+                data: []
+            }*/]
+        });
+    });
+
+</script>
