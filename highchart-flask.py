@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 @app.route('/simulate')
 def index():
-    return render_template('index.htm')
+    return render_template('simulate.htm')
 
 @app.route('/dummy.json')
 def dummy():
