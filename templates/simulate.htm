@@ -1,9 +1,15 @@
 <!DOCTYPE HTML>
 
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="{{ url_for('static',filename='highstock/code/highstock.js') }}"></script>
 <script src="{{ url_for('static',filename='highstock/code/modules/drag-panes.js') }}"></script>
 <script src="{{ url_for('static',filename='highstock/code/modules/exporting.js') }}"></script>
+
+<!-- Bootstrap core JavaScript -->
+<script src="{{ url_for('static',filename='bootstrap/js/tests/vendor/jquery.min.js') }}"></script>
+<script src="{{ url_for('static',filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+<!-- Bootstrap core CSS -->
+<link href="{{ url_for('static',filename='bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 
 <html>
 <head>
@@ -17,9 +23,8 @@
 </head>
 <body>
 
-
-<button type="button" id="btnPlay">Play</button>
-<button type="button" id="btnStop">Stop</button>
+<button type="button" class="btn btn-sm btn-default" id="btnPlay">Play</button>
+<button type="button" class="btn btn-sm btn-default" id="btnStop">Stop</button>
 
 <div id="container" style="height: 400px; min-width: 310px"></div>
 
