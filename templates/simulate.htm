@@ -16,20 +16,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Highstock Example</title>
-
     <style type="text/css">
 
     </style>
 </head>
 <body>
 
-<button type="button" class="btn btn-sm btn-default" id="btnPlay">Play</button>
-<button type="button" class="btn btn-sm btn-default" id="btnStop">Stop</button>
+<div id="navigator">
+    <button type="button" class="btn btn-sm btn-default" id="btnPlay">Play</button>
+    <button type="button" class="btn btn-sm btn-default" id="btnStop">Stop</button>
 
-<button type="button" class="btn btn-sm btn-default" id="btnNext">Next 100</button>
-<button type="button" class="btn btn-sm btn-default" id="btnPrev">Prev 100</button>
+    <button type="button" class="btn btn-sm btn-default" id="btnNext">Next 100</button>
+    <button type="button" class="btn btn-sm btn-default" id="btnPrev">Prev 100</button>
+</div>
 
-<div id="container" style="height: 400px; min-width: 310px"></div>
+<div id="container"></div>
 
 
 <script type="text/javascript">
@@ -92,9 +93,9 @@
     $(document).ready(function () {
         setInterval(function () {
             if(isPlaying) {
-                addPoint('candlestick', 1);
+                addPoint(1);
             }
-        }, 250);
+        }, 500);
     });
 
     $('#btnPlay').click(function () {
@@ -129,8 +130,22 @@
             ]];
 
         // create the chart
-        chart = Highcharts.stockChart('container', {
+        Highcharts.seriesTypes.column.prototype.pointAttribs = (function (func) {
+            return function (point, state) {
+                var attribs = func.apply(this, arguments);
 
+                var candlePoint = this.chart.series[0].data[point.index];
+                var color = (candlePoint.open < candlePoint.close) ? '#E71909' : '#115BCB';
+                attribs.fill = state == 'hover' ? Highcharts.Color(color).brighten(0.3).get() : color;
+
+                return attribs;
+            };
+        }(Highcharts.seriesTypes.column.prototype.pointAttribs));
+
+        chart = Highcharts.stockChart('container', {
+            chart: {
+                height: $(window).height() - $('#navigator').height()
+            },
             rangeSelector: {
                 selected: 1
             },
@@ -147,7 +162,7 @@
                 title: {
                     text: 'OHLC'
                 },
-                height: '60%',
+                height: '80%',
                 lineWidth: 2,
                 resize: {
                     enabled: true
@@ -160,14 +175,30 @@
                 title: {
                     text: 'Volume'
                 },
-                top: '65%',
-                height: '35%',
+                top: '85%',
+                height: '15%',
                 offset: 0,
                 lineWidth: 2
             }],
 
             tooltip: {
                 split: true
+            },
+
+            plotOptions: {
+                candlestick: {
+                    color: '#115BCB',
+                    lineColor: '#115BCB',
+                    upColor: '#E71909',
+                    upLineColor: '#E71909',
+                    pointPadding: 0.2,
+                    groupPadding: 0,
+                },
+                column: {
+                    color: '#2E2E2E',
+                    pointPadding: 0.2,
+                    groupPadding: 0,
+                }
             },
 
             series: [{
