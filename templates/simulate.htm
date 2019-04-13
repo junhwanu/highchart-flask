@@ -97,9 +97,15 @@
         chart.redraw();
     }
 
+    $(window).resize(function() {
+        chart.update({
+           chart: {
+               height: $(window).height() - $('#tabs').height() - ($('.tab-content').height() - $('#container').height())
+           }
+        });
+    });
+
     $('#sidebarCollapse').click(function() {
-        console.log($('#sidebar').hasClass('active'));
-        console.log($(window).width() - ($('#sidebar').hasClass('active') ? 250 : 0));
         chart.update({
            chart: {
                width: $(window).width() - ($('#sidebar').hasClass('active') ? 250 : 0)
