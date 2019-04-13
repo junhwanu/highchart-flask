@@ -1,38 +1,45 @@
-<!DOCTYPE HTML>
+{% extends 'layout.html' %}
 
-<script src="{{ url_for('static',filename='highstock/code/highstock.js') }}"></script>
-<script src="{{ url_for('static',filename='highstock/code/modules/drag-panes.js') }}"></script>
-<script src="{{ url_for('static',filename='highstock/code/modules/exporting.js') }}"></script>
+{% block content %}
+<ul id="tabs" class="nav nav-tabs" role="tablist">
+  <li role="presentation" id="summary-tab" class="summary-tab">
+    <a href="#summary-panel" aria-controls="settings" role="tab" data-toggle="tab">Summary</a>
+  </li>
+  <li role="presentation" id="chart-tab" class="chart-tab active">
+    <a href="#tab1" aria-controls="settings" role="tab" data-toggle="tab">Chart 1</a>
+  </li>
+</ul>
 
-<!-- Bootstrap core JavaScript -->
-<script src="{{ url_for('static',filename='bootstrap/js/tests/vendor/jquery.min.js') }}"></script>
-<script src="{{ url_for('static',filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade" id="summary-panel" class="summary-tab">
+        <div class="chart-container">
+            <div>
+                Summary Tab.
+            </div>
+        </div>
+    </div>
 
-<!-- Bootstrap core CSS --> 
-<link href="{{ url_for('static',filename='bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <div role="tabpanel" class="tab-pane fade in active" id="tab1" class="chart-tab">
+        <div class="chart-container">
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-default" id="btnPlay">Play</button>
+                <button type="button" class="btn btn-default" id="btnStop">Stop</button>
+                <button type="button" class="btn btn-default" id="btnNext">Next 100</button>
+                <button type="button" class="btn btn-default" id="btnPrev">Prev 100</button>
+            </div>
 
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Highstock Example</title>
-    <style type="text/css">
+            <button type="button" id="sidebarCollapse" class="btn btn-sm btn-info">
+                    <i class="fas fa-align-left"></i>
+                    <span>Toggle Sidebar</span>
+            </button>
 
-    </style>
-</head>
-<body>
-
-<div id="navigator">
-    <button type="button" class="btn btn-sm btn-default" id="btnPlay">Play</button>
-    <button type="button" class="btn btn-sm btn-default" id="btnStop">Stop</button>
-
-    <button type="button" class="btn btn-sm btn-default" id="btnNext">Next 100</button>
-    <button type="button" class="btn btn-sm btn-default" id="btnPrev">Prev 100</button>
+            <div id="container"></div>
+        </div>
+    </div>
 </div>
+{% endblock %}
 
-<div id="container"></div>
-
-
+{% block scripts %}
 <script type="text/javascript">
     var chart, data;
     var index = 0;
@@ -90,6 +97,16 @@
         chart.redraw();
     }
 
+    $('#sidebarCollapse').click(function() {
+        console.log($('#sidebar').hasClass('active'));
+        console.log($(window).width() - ($('#sidebar').hasClass('active') ? 250 : 0));
+        chart.update({
+           chart: {
+               width: $(window).width() - ($('#sidebar').hasClass('active') ? 250 : 0)
+           }
+        });
+    });
+
     $(document).ready(function () {
         setInterval(function () {
             if(isPlaying) {
@@ -144,7 +161,11 @@
 
         chart = Highcharts.stockChart('container', {
             chart: {
-                height: $(window).height() - $('#navigator').height()
+                events: {
+                    redraw: function () {
+                    }
+                },
+                height: $(window).height() - $('#tabs').height() - $('.tab-content').height()
             },
             rangeSelector: {
                 selected: 1
@@ -224,5 +245,4 @@
         addPoint(100);
     });
 </script>
-</body>
-</html>
+{% endblock %}

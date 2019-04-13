@@ -11,9 +11,15 @@ from db_manager import DBManager
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/dummy')
 def index():
+    return render_template('layout.html')
+
+
+@app.route('/')
+def test():
     return render_template('simulate.htm')
+
 
 @app.route('/dummy.json')
 def dummy():
@@ -59,6 +65,7 @@ def dummy():
             json.dump(dummy, f)
 
     return json.dumps(dummy)
+
 
 if __name__ == '__main__':
     app.run()
