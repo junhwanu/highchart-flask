@@ -8,7 +8,7 @@
 <script src="{{ url_for('static',filename='bootstrap/js/tests/vendor/jquery.min.js') }}"></script>
 <script src="{{ url_for('static',filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-<!-- Bootstrap core CSS -->
+<!-- Bootstrap core CSS --> 
 <link href="{{ url_for('static',filename='bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 
 <html>
@@ -26,33 +26,73 @@
 <button type="button" class="btn btn-sm btn-default" id="btnPlay">Play</button>
 <button type="button" class="btn btn-sm btn-default" id="btnStop">Stop</button>
 
+<button type="button" class="btn btn-sm btn-default" id="btnNext">Next 100</button>
+<button type="button" class="btn btn-sm btn-default" id="btnPrev">Prev 100</button>
+
 <div id="container" style="height: 400px; min-width: 310px"></div>
 
 
 <script type="text/javascript">
     var chart, data;
-    var index = 100;
+    var index = 0;
     var isPlaying = false;
+
+    function addPoint(n) {
+        for (var i=0;i<n;i++)
+        {
+            if(index + 1 >= data.length) break;
+
+            var candle = [
+                data[index]['min_15']['added']['candlestick']['data'][1], // the date
+                data[index]['min_15']['added']['candlestick']['data'][2], // the open
+                data[index]['min_15']['added']['candlestick']['data'][3], // the high
+                data[index]['min_15']['added']['candlestick']['data'][4], // the low
+                data[index]['min_15']['added']['candlestick']['data'][5], // the close
+            ];
+            var volume = [
+                data[index]['min_15']['added']['candlestick']['data'][1], // the date
+                data[index]['min_15']['added']['candlestick']['data'][6], // the volume
+            ];
+
+            chart.get('candlestick').addPoint(candle, false, false);
+            chart.get('volume').addPoint(volume, false, false); // 임시로 volume 추가, 이후에는 'added'안의 key를 탐색해서 동적 추가를 해주어야 함.
+
+            index++;
+        }
+        chart.redraw();
+    }
+
+    function removePoint(n) {
+        var nextIndex = index - n < 0 ? 0 : index - n;
+        var _date = data[nextIndex]['min_15']['added']['candlestick']['data'][1];
+        var nSeries = chart.series.length;
+
+        for(var i=0;i<nSeries;i++) {
+            var series = chart.series[i];
+
+            for(var j=series.data.length - 1;j>=0;j--) {
+                try {
+                    if (series.data[j].x > _date) {
+                        series.removePoint(j, false, false);
+                    }
+                } catch(err) {
+                    console.error(err);
+                    console.error('series index : ', i);
+                    console.error('series data : ', series.data);
+                    console.error('j : ', j);
+                    console.error('series point data : ', series.data[j]);
+                }
+            }
+        }
+
+        index = nextIndex;
+        chart.redraw();
+    }
 
     $(document).ready(function () {
         setInterval(function () {
             if(isPlaying) {
-                var candle = [
-                    data[index]['min_15']['added']['candlestick']['data'][1], // the date
-                    data[index]['min_15']['added']['candlestick']['data'][2], // the open
-                    data[index]['min_15']['added']['candlestick']['data'][3], // the high
-                    data[index]['min_15']['added']['candlestick']['data'][4], // the low
-                    data[index]['min_15']['added']['candlestick']['data'][5], // the close
-                ];
-                var volume = [
-                    data[index]['min_15']['added']['candlestick']['data'][1], // the date
-                    data[index]['min_15']['added']['candlestick']['data'][6], // the volume
-                ];
-
-                chart.get('candlestick').addPoint(candle, false, false);
-                chart.get('volume').addPoint(volume, true, false);
-
-                index++;
+                addPoint('candlestick', 1);
             }
         }, 250);
     });
@@ -62,6 +102,14 @@
     });
     $('#btnStop').click(function () {
         isPlaying = false;
+    });
+
+    $('#btnNext').click(function() {
+        addPoint(100);
+    });
+
+    $('#btnPrev').click(function() {
+        removePoint(100);
     });
 
     $.getJSON('/dummy.json', function (dummy) {
@@ -78,25 +126,7 @@
             ], [
                 'month',
                 [1, 2, 3, 4, 6]
-            ]],
-
-            i = 0;
-
-        for (i; i < index; i += 1) {
-            ohlc.push([
-                data[i]['min_15']['added']['candlestick']['data'][1], // the date
-                data[i]['min_15']['added']['candlestick']['data'][2], // the open
-                data[i]['min_15']['added']['candlestick']['data'][3], // the high
-                data[i]['min_15']['added']['candlestick']['data'][4], // the low
-                data[i]['min_15']['added']['candlestick']['data'][5], // the close
-            ]);
-
-            volume.push([
-                data[i]['min_15']['added']['candlestick']['data'][1], // the date
-                data[i]['min_15']['added']['candlestick']['data'][6], // the volume
-            ]);
-        }
-
+            ]];
 
         // create the chart
         chart = Highcharts.stockChart('container', {
@@ -159,6 +189,8 @@
                 }
             }]
         });
+
+        addPoint(100);
     });
 </script>
 </body>
