@@ -20,6 +20,10 @@ def index():
 def test():
     return render_template('simulate.htm')
 
+@app.route('/testpage')
+def test():
+    return render_template('testpage.htm')
+
 
 @app.route('/dummy.json')
 def dummy():
