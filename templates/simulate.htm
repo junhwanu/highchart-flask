@@ -1,3 +1,4 @@
+<!-- extends layout.html이 base 템플릿! extends는 항상 젤 처음에 와야함 -->
 {% extends 'layout.html' %}
 
 {% block content %}
@@ -6,6 +7,7 @@
     <a href="#summary-panel" aria-controls="settings" role="tab" data-toggle="tab">Summary</a>
   </li>
   <li role="presentation" id="chart-tab" class="chart-tab active">
+      <!-- 같은 문서 내에서 가리키는 id #tab1 -->
     <a href="#tab1" aria-controls="settings" role="tab" data-toggle="tab">Chart 1</a>
   </li>
 </ul>

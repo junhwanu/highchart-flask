@@ -21,7 +21,7 @@ def test():
     return render_template('simulate.htm')
 
 @app.route('/testpage')
-def test():
+def testpage():
     return render_template('testpage.htm')
 
 

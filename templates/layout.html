@@ -1,3 +1,5 @@
+<!-- base가 되는 html 템플릿 -->
+
 <!DOCTYPE html>
 <html>
 
@@ -59,8 +61,10 @@
                 </li>
             </ul>
         </nav>
+        <!-- 여기까지가 기본 템플릿으로 좌측 사이드바를 나타냄-->
 
         <!-- Content block -->
+        <!-- 여기서부터 상속받아서 구현하면 좌측 사이드바 말고 오른쪽 큰화면의 summary char랑 텝보여주는곳-->
         <div id="content">
             {% block content %}{% endblock %}
         </div>
@@ -82,6 +86,7 @@
     <script src="{{ url_for('static',filename='bootstrap/js/tests/vendor/jquery.min.js') }}"></script>
     <script src="{{ url_for('static',filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
+
     <script type="text/javascript">
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
@@ -91,7 +96,9 @@
     </script>
 
     <!-- Custom scripts -->
-    {% block scripts %}{% endblock %}
+    <!-- 차트를 그리는곳 scripts 상속 -->
+    {% block scripts %}
+    {% endblock %}
 </body>
 
 </html>
