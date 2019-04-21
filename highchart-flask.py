@@ -16,6 +16,12 @@ def index():
     return render_template('layout.html')
 
 
+@app.route('/folder-list.json')
+def get_folder_list():
+    res = ['GCJ19', 'GCM19']
+
+    return json.dumps(res)
+
 @app.route('/')
 def test():
     return render_template('simulate.htm')
